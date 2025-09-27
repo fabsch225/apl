@@ -1,0 +1,18 @@
+input ← ⊃⎕NGET '/home/fabian/Desktop/d1_input.txt' 1 	⍝ Lines as a vector
+mask ← (≢¨ input) ≠ 0									⍝ Detect emptys 1 for value else 0
+nums ← {⍵≡'' : 0 ⋄ ⍎⍵}¨ input 							⍝ Convert to flat vector of numeric values
+diffMask ← mask ∧ ~0,¯1↓mask							⍝ Diffs
+grouped ← diffMask ⊂ nums								⍝ After each 1 in the diff, split into sub vector
+sums ← +/¨grouped										⍝ Sum each sub vector
+⌈/sums													⍝ Get and print maximum
++/ 3↑sums[⍒sums]										⍝ Sum of Top 3 Values
+
+a ← 0													⍝ Control
+⍝ repeat 3 times
+a +← ⌈/sums
+sums[(sums=⌈/sums) ⍳ 1] ← 0								⍝ Max Index: (sums=⌈/sums) ⍳ 1
+a +← ⌈/sums
+sums[(sums=⌈/sums) ⍳ 1] ← 0
+a +← ⌈/sums
+sums[(sums=⌈/sums) ⍳ 1] ← 0
+a
