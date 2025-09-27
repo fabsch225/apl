@@ -1,0 +1,26 @@
+⎕IO ← 0
+
+input ← ⊃⎕NGET '/home/fabian/misc/apl/aoc2022/d3_input.txt' 1 		⍝ Lines as a vector
+
+Score ← {
+	1 + 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'⍳⊃⍵   ⍝ Maps a->1, b->2 ... z->26, A->27 ... Z->52
+}
+
+ProcessRucksack ← {
+	len ← ⍴⍵
+	mid ← len ÷ 2
+    dupes ← ∪ (mid↑⍵) ∩ (mid↓⍵)										⍝ Substring: First Half mid↑⍵; Intersection
+    +/ ¨ Score +/ ¨ dupes
+}
+
+⎕ ← output ← +/ ProcessRucksack ¨ input								⍝ Apply to each Rucksack
+
+mask ← (⍴ input) ⍴ 1 0 0											⍝ Create mask = 1 0 0 1 0 0 ... for grouping
+groups ← mask ⊂ input												⍝ Put 3 rucksacks into one group
+		
+ProcessGroup ← {
+	code ← ∪ ⊃ ∩/ ⍵													⍝ Intersect and get character
+	Score code														⍝ Evaluate character								
+}
+
+⎕ ← output2 ← +/ ProcessGroup ¨ groups								⍝ Sum evaluation for each group	

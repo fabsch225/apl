@@ -1,0 +1,29 @@
+⎕IO ← 0
+
+input ← ⊃⎕NGET '/home/fabian/misc/apl/aoc2022/d4_input.txt' 1 		⍝ Lines as a vector
+
+ParseNum ← {
+	mask ← {⍵ ∊ '0123456789'} ¨ ⍵
+	⍎ (mask / ⍵)													⍝ Evaluate number-string to number
+}
+
+ParseIntervals ← {
+	mask ← ~(⍵ ∊ ',-')
+	diffMask ← mask ∧ ~0,¯1↓mask
+	⎕ ← diffMask
+	split ← diffMask ⊂ ⍵											⍝ Split at delimeters
+	ParseNum ¨ split												⍝ Clean delimeters
+}
+
+FullOverlap ← {
+	(a b c d) ← ⍵
+	((a ≥ c) ∧ (b ≤ d)) ∨ ((a ≤ c) ∧ (b ≥ d))
+}
+
+AnyOverlap ← {
+	(a b c d) ← ⍵
+	((a ≤ c) ∧ (b ≤ d) ∧ (b ≥ c)) ∨ ((a ≥ c) ∧ (b ≥ d) ∧ (a ≤ d)) ∨ ((a ≥ c) ∧ (b ≤ d)) ∨ ((a ≤ c) ∧ (b ≥ d))
+}
+
+⎕ ← +/ FullOverlap ∘ ParseIntervals ¨ input							⍝ Composition like in maths
+⎕ ← +/ AnyOverlap ∘ ParseIntervals ¨ input

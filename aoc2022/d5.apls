@@ -1,0 +1,45 @@
+⎕IO ← 0
+
+input_moves ← ⊃⎕NGET '/home/fabian/misc/apl/aoc2022/d5_input.txt' 1 ⍝ Lines as a vector
+
+ParseNum ← {
+	mask ← {⍵ ∊ '0123456789'} ¨ ⍵
+	⍎ (mask / ⍵)
+}
+
+ParseMove ← {
+	mask ← ~(⍵ ∊ ' ')
+	diffMask ← mask ∧ ~0,¯1↓mask
+	split ← diffMask ⊂ ⍵	
+    ParseNum ¨ (split[1], split[3], split[5])
+}
+
+moves ← ParseMove ¨ input_moves
+
+⍝stacks ← 'NZ' 'DCM' 'P'
+starting_stacks ← 'NQLSCZPT' 'GCHVTPL' 'FZCD' 'CVMLDTWG' 'CWP' 'ZSTCDJFP' 'DBGWV' 'WHQSJN' 'VLSFQCR'
+stacks ← starting_stacks
+
+DoMove ← {
+    (n a b) ← ⊃⍵
+    take ← n↑⊃stacks[a-1]
+    stacks[a-1] ← ⊂(n↓⊃stacks[a-1])
+    stacks[b-1] ← ⊂((⌽take), ⊃stacks[b-1]) 	⍝ Reverse take and concat						
+}
+
+{DoMove moves[⍵]} ¨ ⍳(⍴moves)
+
+⎕ ← {⍵[0]} ¨ stacks
+
+DoMovePtTwo ← {
+    (n a b) ← ⊃⍵
+    take ← n↑⊃stacks[a-1]
+    stacks[a-1] ← ⊂(n↓⊃stacks[a-1])
+    stacks[b-1] ← ⊂(take, ⊃stacks[b-1])			
+}
+
+stacks ← starting_stacks
+
+{DoMovePtTwo moves[⍵]} ¨ ⍳(⍴moves)
+
+⎕ ← {⍵[0]} ¨ stacks
