@@ -1,0 +1,110 @@
+⎕IO ← 0
+
+input ← ⊃⎕NGET '/home/fabian/Misc/apl/aoc2022/d7_input.txt' 1           ⍝ Lines as a vector
+
+⎕SE.dirs ← 4 1 ⍴ (,'/' ¯1 (⍬) (⍬))
+⎕SE.cwd ← ,'/'
+
+PerformCDIn ← { ⎕SE.cwd ← ⎕SE.cwd CDIn ⍵ }
+
+CDIn ← {
+    output ← ⍺
+    ⍵ ≡ ,'/' : output ← ,'/'
+    ((output ≡ ,'/') ∧ ((⊃⍵) ≢ '/')) : output ← '/' , ⍵                   ⍝ current is /, avoid double slash
+    ((output ≢ ,'/') ∧ ((⊃⍵) ≢ '/')) : output ← output , '/' , ⍵
+    output
+}
+
+PerformCDOut ← { ⎕SE.cwd ← ⎕SE.cwd CDOut ⍵ }
+
+CDOut ← {
+    output ← ⍺
+    L ← ⍴ output
+    idxs ← ⍸'/'=output
+    idx ← ⊃idxs[⍒idxs]
+    L = 1: result ← ,'/'
+    L = 2: result ← ,'/'
+    L > 2: result ← (idx ↑ output)
+    result
+}
+
+AddDir ← {
+    name ← ⍵
+    L ← (⍴ ⎕SE.dirs)[1]
+    idx ← ⊃ ⍸ {(⎕SE.cwd) ≡ ⍵} ¨ ⎕SE.dirs[0;]
+    dir ← ⎕SE.dirs[;idx]
+    path s subs files ← dir
+    newdir ← ⎕SE.cwd CDIn name
+    subs ← subs ,⊂ newdir
+    ⎕SE.dirs[;idx] ← (4 1 ⍴ (path ¯1 subs files))
+    ⎕SE.dirs ← ⎕SE.dirs , (4 1 ⍴ (newdir ¯1 (⍬) (⍬)))
+}
+
+AddFile ← {
+    (name size) ← ⍵
+    L ← (⍴ ⎕SE.dirs)[1]
+    idx ← ⊃ ⍸ {(⎕SE.cwd) ≡ ⍵} ¨ ⎕SE.dirs[0;]
+    dir ← ⎕SE.dirs[;idx]
+    path s subs files ← dir
+    files ← files , ⊂ (name size)
+    ⎕SE.dirs[;idx] ← (4 1 ⍴ (path ¯1 subs files))
+}
+
+ParseLine ← {
+    mask ← ~(⍵ ∊ ' ')
+    diffMask ← mask ∧ ~0,¯1↓mask
+    tokens ← diffMask ⊂ ⍵
+    tokens ← (¯1↓¨¯1↓tokens),(⊂⊃⌽tokens)
+    (≢tokens)=2 : tokens , 'x' ⋄ tokens
+}
+
+ProcessLine ← {
+    a b c ← ParseLine ⍵
+    a ≡ 'dir' : AddDir b
+    (a ≡ ,'$') ∧ (b ≡ 'cd') ∧ (c ≡ '..') : PerformCDOut 0
+    (a ≡ ,'$') ∧ (b ≡ 'cd') ∧ (c ≢ '..') : PerformCDIn c
+    a[0]∊'0123456789' : AddFile (b a)
+}
+
+ProcessLine ¨ input
+
+CalculateSize ← {
+    idx ← ⍵
+    subdirs ←  ⊃ ⎕SE.dirs[2; idx]
+    files   ←  ⊃ ⎕SE.dirs[3; idx]
+    subSizes ← +/ GetDirSize¨ (subdirs)
+
+    ((⍴ files) > 0) : subSizes + (+/ ⍎¨ {⊃⍵[1]}¨ files) ⋄ subSizes
+}
+
+GetSizeInternal ← {
+    idx ← ⍵
+    size ← ⎕SE.dirs[1; idx]
+    (size ≠ ¯1) : {
+        ⍝⎕ ← 'cached' ⋄ 
+        ⍵
+    } size ⋄ CalculateSize idx
+}
+
+GetDirSize ← {
+    path ← ⍵
+    ~(1 ∊ {path ≡ ⍵} ¨ ⎕SE.dirs[0;]) : 0
+    idx ← ⊃ ⍸ {path ≡ ⍵} ¨ ⎕SE.dirs[0;]
+    
+    size ← GetSizeInternal idx
+    ⎕SE.dirs[1; idx] ← size
+    size
+}
+
+sizes ← GetDirSize ¨ ⎕SE.dirs[0;]
+
+⎕ ← +/ {⍵ > 100000 : 0 ⋄ ⍵} ¨ sizes
+unused ← 70000000 - sizes[0]
+to_delete ← 30000000 - unused
+
+diffs ← sizes - to_delete
+mask ← diffs > 0
+positiveVals ← mask / diffs
+minVal ← ⌊/ positiveVals
+idx ← ⍸ (diffs = minVal)
+⎕ ← ⎕SE.dirs[1;idx]

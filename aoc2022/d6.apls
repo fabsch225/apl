@@ -1,0 +1,18 @@
+⎕IO ← 0
+
+input_moves ← ⊃⎕NGET '/home/fabian/Misc/apl/aoc2022/d6_input.txt' 1 ⍝ Lines as a vector
+
+Task ← {
+	str ← ⊃ input_moves
+	n ← ⍵
+	L ← ≢str
+	windows ← { str[⍵+⍳n] }¨ ⍳(L - n)								⍝ Vector of substrings (n,/str is a Window Reduction and much shorter)
+	counts ← ≢¨ ∪¨ windows											⍝ Convert to set and count
+	(⊃ ⍸ (counts = n)) + n 											⍝ Return first index where count fits
+}
+
+⎕ ← Task 4
+⎕ ← Task 14
+
+
+⎕ ← {(⊃ ⍸ ((≢¨ ∪¨ ⍵,/(⊃ input_moves)) = ⍵)) + ⍵ } ¨ (4 14)			⍝ one-liner
