@@ -1,6 +1,6 @@
 ⎕IO ← 0
 
-input_moves ← ⊃⎕NGET '/home/fabian/Misc/apl/aoc2022/d6_input.txt' 1 ⍝ Lines as a vector
+input_moves ← ⊃⎕NGET './d6_input.txt' 1 ⍝ Lines as a vector
 
 Task ← {
 	str ← ⊃ input_moves

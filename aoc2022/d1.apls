@@ -1,4 +1,4 @@
-input ← ⊃⎕NGET '/home/fabian/misc/apl/aoc2022/d1_input.txt' 1 	⍝ Lines as a vector
+input ← ⊃⎕NGET './d1_input.txt' 1 	⍝ Lines as a vector
 mask ← (≢¨ input) ≠ 0											⍝ Detect emptys 1 for value else 0
 nums ← {⍵≡'' : 0 ⋄ ⍎⍵}¨ input 									⍝ Convert to flat vector of numeric values
 diffMask ← mask ∧ ~0,¯1↓mask									⍝ Diffs

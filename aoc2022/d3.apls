@@ -1,6 +1,6 @@
 ⎕IO ← 0
 
-input ← ⊃⎕NGET '/home/fabian/misc/apl/aoc2022/d3_input.txt' 1 		⍝ Lines as a vector
+input ← ⊃⎕NGET './d3_input.txt' 1 		⍝ Lines as a vector
 
 Score ← {
 	1 + 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'⍳⊃⍵   ⍝ Maps a->1, b->2 ... z->26, A->27 ... Z->52

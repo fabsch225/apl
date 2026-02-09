@@ -1,4 +1,4 @@
-input ← ⊃⎕NGET '/home/fabian/misc/apl/aoc2022/d2_input.txt' 1 	⍝ Lines as a vector
+input ← ⊃⎕NGET './d2_input.txt' 1 	⍝ Lines as a vector
 
 Score ← {
     o ← 'ABC'⍳⊃⍵[1]

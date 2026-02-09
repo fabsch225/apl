@@ -1,6 +1,6 @@
 ⎕IO ← 0
 
-input ← ⊃⎕NGET '/home/fabian/Misc/apl/aoc2022/d7_input.txt' 1           ⍝ Lines as a vector
+input ← ⊃⎕NGET './d7_input.txt' 1           ⍝ Lines as a vector
 
 ⎕SE.dirs ← 4 1 ⍴ (,'/' ¯1 (⍬) (⍬))
 ⎕SE.cwd ← ,'/'

@@ -1,6 +1,6 @@
 ⎕IO ← 0
 
-input ← ⊃⎕NGET '/home/fabian/misc/apl/aoc2022/d4_input.txt' 1 		⍝ Lines as a vector
+input ← ⊃⎕NGET './d4_input.txt' 1 		⍝ Lines as a vector
 
 ParseNum ← {
 	mask ← {⍵ ∊ '0123456789'} ¨ ⍵
